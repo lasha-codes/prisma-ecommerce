@@ -6,12 +6,13 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { formatCurrency } from '@/lib/formatter'
 import { useState } from 'react'
+import { addProduct } from '../../-actions/products'
 
 const ProductForm = () => {
   const [priceInCents, setPriceInCents] = useState<number>()
 
   return (
-    <form className='space-y-8'>
+    <form action={addProduct} className='space-y-8'>
       <div className='space-y-2'>
         <Label htmlFor='name'>Name</Label>
         <Input type='text' id='name' name='name' required />
@@ -21,10 +22,10 @@ const ProductForm = () => {
         <Input
           type='number'
           id='priceInCents'
-          name='name'
+          name='priceInCents'
           required
           value={priceInCents}
-          onChange={(e) => setPriceInCents(Number(e.target.value || undefined))}
+          onChange={(e) => setPriceInCents(parseInt(e.target.value))}
         />
         <div className='text-muted-foreground'>
           {formatCurrency((priceInCents || 0) / 100)}
