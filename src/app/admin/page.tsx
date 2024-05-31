@@ -13,7 +13,6 @@ const getSalesData = async () => {
     _sum: { pricePaidInCents: true },
     _count: true,
   })
-  await wait(2000)
 
   return {
     amount: (data._sum.pricePaidInCents || 0) / 100,
@@ -45,10 +44,6 @@ const getProductData = async () => {
   ])
 
   return { activeCount, inactiveCount }
-}
-
-function wait(duration: number) {
-  return new Promise((resolve) => setTimeout(() => resolve(''), duration))
 }
 
 const AdminDashboard = async () => {
