@@ -15,12 +15,12 @@ const addSchema = z.object({
   image: fileSchema.refine((file) => file.size > 0, 'Required'),
 })
 
-export const addProduct = async (formData: FormData) => {
+export const addProduct = async (prevState: unknown, formData: FormData) => {
   const products = await db.product.findMany()
   console.log(products)
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()))
   if (result.success === false) {
-    return console.log(result.error.formErrors.fieldErrors)
+    return result.error.formErrors.fieldErrors
   }
 
   const data = result.data
@@ -38,6 +38,7 @@ export const addProduct = async (formData: FormData) => {
 
   await db.product.create({
     data: {
+      isAvailableForPurchase: false,
       name: data.name,
       description: data.description,
       priceInCents: Number(data.priceInCents),
