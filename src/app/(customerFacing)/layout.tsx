@@ -3,7 +3,7 @@ import { NavLink } from '@/components/Nav'
 
 export const dynamic = 'force-dynamic'
 
-const AdminLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+const HomeLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <>
       <Nav>
@@ -16,4 +16,4 @@ const AdminLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   )
 }
 
-export default AdminLayout
+export default HomeLayout
