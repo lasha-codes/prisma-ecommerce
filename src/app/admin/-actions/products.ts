@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import db from '@/db/db'
 import fs from 'fs/promises'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 const fileSchema = z.instanceof(File, { message: 'required' })
 
@@ -60,4 +60,9 @@ export async function toggleProductAvailability(
       isAvailableForPurchase: isAvailableForPurchase,
     },
   })
+}
+
+export const deleteProduct = async (id: string) => {
+  const product = await db.product.delete({ where: { id } })
+  if (product === null) return notFound()
 }
