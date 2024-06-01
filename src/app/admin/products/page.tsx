@@ -11,11 +11,12 @@ import {
 } from '@/components/ui/table'
 import db from '@/db/db'
 import { CheckCircle2, MoreVertical, XCircle } from 'lucide-react'
-import { formatCurrency } from '@/lib/formatter'
+import { formatCurrency, formatNumber } from '@/lib/formatter'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -81,7 +82,7 @@ async function ProductsTable() {
                 ) : (
                   <>
                     <span className='sr-only'>Unavailable</span>
-                    <XCircle />
+                    <XCircle className='stroke-destructive' />
                   </>
                 )}
               </TableCell>
@@ -89,7 +90,7 @@ async function ProductsTable() {
               <TableCell>
                 {formatCurrency(product.priceInCents / 100)}
               </TableCell>
-              <TableCell>{formatCurrency(product._count.orders)}</TableCell>
+              <TableCell>{formatNumber(product._count.orders)}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger>
@@ -114,6 +115,7 @@ async function ProductsTable() {
                       id={product.id}
                       isAvailableForPurchase={product.isAvailableForPurchase}
                     />
+                    <DropdownMenuSeparator />
                     <DeleteDropdownItem
                       id={product.id}
                       disabled={product._count.orders > 0}
