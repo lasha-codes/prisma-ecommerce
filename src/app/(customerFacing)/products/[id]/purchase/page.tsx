@@ -23,7 +23,7 @@ const PurchasePage = async ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <CheckoutForm
-      publicKey={process.env.NEXT_STRIPE_PUBLIC_KEY}
+      publicKey={process.env.NEXT_STRIPE_PUBLIC_KEY as string}
       product={product}
       clientSecret={paymentIntent.client_secret}
     />
