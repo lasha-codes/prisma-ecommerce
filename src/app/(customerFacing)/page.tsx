@@ -88,7 +88,7 @@ async function ProductSuspense({
   productsFetcher: () => Promise<Product[]>
 }) {
   {
-    await wait(700)
+    await wait(300)
     return (await productsFetcher()).map((product) => (
       <ProductCard key={product.id} {...product} />
     ))
