@@ -51,7 +51,13 @@ const SuccessPage = async ({
           </div>
           <Button className='mt-4' size='lg' asChild>
             {isSuccess ? (
-              <a className=''></a>
+              <a
+                href={`/products/download/${await createDownloadVerification(
+                  product.id
+                )}`}
+              >
+                Download
+              </a>
             ) : (
               <Link href={`/products/${product.id}/purchase`}>Try again</Link>
             )}
@@ -63,3 +69,14 @@ const SuccessPage = async ({
 }
 
 export default SuccessPage
+
+async function createDownloadVerification(productId: string) {
+  return (
+    await db.downloadVerification.create({
+      data: {
+        productId,
+        expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      },
+    })
+  ).id
+}
