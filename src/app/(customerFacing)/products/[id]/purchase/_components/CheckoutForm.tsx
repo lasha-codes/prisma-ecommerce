@@ -5,12 +5,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatter'
 import {
   Elements,
+  LinkAuthenticationElement,
   PaymentElement,
   useElements,
   useStripe,
@@ -21,6 +23,7 @@ import { FormEvent, useState } from 'react'
 
 type CheckoutFormProps = {
   product: {
+    id: string
     imagePath: string
     name: string
     priceInCents: number
@@ -29,6 +32,7 @@ type CheckoutFormProps = {
   clientSecret: string
   publicKey: string
 }
+import { userOrderExists } from '@/app/_actions/orders'
 
 const CheckoutForm = ({
   product,
@@ -58,7 +62,7 @@ const CheckoutForm = ({
         </div>
       </div>
       <Elements options={{ clientSecret }} stripe={stripePromise}>
-        <Form priceInCents={product.priceInCents} />
+        <Form priceInCents={product.priceInCents} productId={product.id} />
       </Elements>
     </div>
   )
@@ -66,22 +70,37 @@ const CheckoutForm = ({
 
 export default CheckoutForm
 
-function Form({ priceInCents }: { priceInCents: number }) {
+function Form({
+  priceInCents,
+  productId,
+}: {
+  priceInCents: number
+  productId: string
+}) {
   const stripe = useStripe()
   const elements = useElements()
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>()
+  const [email, setEmail] = useState<string>('')
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
-    if (stripe === null || elements === null) {
+    if (stripe === null || elements === null || email === null) {
       return
     }
 
     setIsLoading(true)
 
-    // Check for existing order
+    const orderExists = await userOrderExists(email, productId)
+
+    if (orderExists) {
+      setErrorMessage(
+        'U have already purchased this product try downloading it from the My Orders page'
+      )
+      setIsLoading(false)
+      return
+    }
 
     stripe
       .confirmPayment({
@@ -102,7 +121,6 @@ function Form({ priceInCents }: { priceInCents: number }) {
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-      <PaymentElement />
       <Card>
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
@@ -111,6 +129,14 @@ function Form({ priceInCents }: { priceInCents: number }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <PaymentElement />
+          <div className='mt-4'>
+            <LinkAuthenticationElement
+              onChange={(e) => setEmail(e.value.email)}
+            />
+          </div>
+        </CardContent>
+        <CardFooter>
           <Button
             className='w-full'
             size='lg'
@@ -120,7 +146,7 @@ function Form({ priceInCents }: { priceInCents: number }) {
               ? 'Purchasing...'
               : `Purchase - ${formatCurrency(priceInCents / 100)}`}
           </Button>
-        </CardContent>
+        </CardFooter>
       </Card>
     </form>
   )
